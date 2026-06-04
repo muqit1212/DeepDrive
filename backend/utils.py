@@ -28,17 +28,16 @@ def preprocess_image(image_path, target_size=(224, 224)):
         np.array: The preprocessed image.
     """
     try:
-        img = Image.open(image_path)
+        with Image.open(image_path) as img:
+            if img.mode != 'RGB':
+                img = img.convert('RGB')
 
-        if img.mode != 'RGB':
-            img = img.convert('RGB')
+            img = img.resize(target_size, resample=Image.LANCZOS)
+            img.load()
 
-        img = img.resize(target_size, resample=Image.LANCZOS)
-
-        img_array = np.array(img)
+            img_array = np.array(img)
 
         img_array = img_array / 255.0
-
         img_array = np.expand_dims(img_array, axis=0)
 
         return img_array

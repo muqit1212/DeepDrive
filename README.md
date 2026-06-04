@@ -53,6 +53,24 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+### 4.1. (Optional) Speed up Hugging Face downloads
+If you see warnings about unauthenticated requests to the Hugging Face Hub, set a token before running the backend. This improves download speed and avoids rate limiting for large model files.
+
+**Windows PowerShell:**
+```powershell
+$env:HF_TOKEN="your_hf_token"
+# or
+$env:HUGGINGFACEHUB_API_TOKEN="your_hf_token"
+```
+
+**Windows Command Prompt:**
+```cmd
+set HF_TOKEN=your_hf_token
+set HUGGINGFACEHUB_API_TOKEN=your_hf_token
+```
+
+You can get a token from https://huggingface.co/settings/tokens
+
 ### 5. Database Setup
 
 The ChromaDB database is already configured and will be created automatically in the `clip_chroma` directory when you first run the prediction or data loading scripts.
@@ -212,6 +230,11 @@ pip install -r requirements.txt
 # For CPU-only version
 pip install tensorflow-cpu==2.16.1
 ```
+
+**Issue: Hugging Face download slow or unauthenticated**
+- Set `HF_TOKEN` or `HUGGINGFACEHUB_API_TOKEN` before starting the backend
+- Use a Hugging Face token from https://huggingface.co/settings/tokens
+- Restart the terminal after adding the environment variable if necessary
 
 **Issue: ChromaDB errors**
 - Delete the `clip_chroma` folder and restart the server to recreate the database

@@ -1,5 +1,5 @@
 import os
-import time
+import tempfile
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,16 +22,23 @@ app.add_middleware(
 async def predict(image: UploadFile = File(...)):
     image_bytes = await image.read()
 
-    with open(image.filename, "wb") as f:
-        f.write(image_bytes)
-    image_path = image.filename
+    with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(image.filename)[1]) as tmp:
+        tmp.write(image_bytes)
+        image_path = tmp.name
 
-    prediction = Prediction()
-    prediction.generate_embeddings(image_path)
-    result = prediction.predict()
-    os.remove(image_path)
+    await image.close()
 
-    return {"result": result}
+    try:
+        prediction = Prediction()
+        prediction.generate_embeddings(image_path)
+        result = prediction.predict()
+        return {"result": result}
+    finally:
+        if os.path.exists(image_path):
+            try:
+                os.remove(image_path)
+            except PermissionError:
+                pass
 
 
 def getLicnceInformation():

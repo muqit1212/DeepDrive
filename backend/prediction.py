@@ -18,7 +18,7 @@ class Prediction:
         self.embedding = None
         if Prediction.model is None:
             Prediction.model = load_model()
-            Prediction.embedding_function = OpenCLIPEmbeddingFunction()
+            Prediction.embedding_function = OpenCLIPEmbeddingFunction(model_name="ViT-B-32", device="cpu")
             Prediction.data_loader = ImageLoader()
             Prediction.client = Client(settings=Settings(is_persistent=True, persist_directory="./clip_chroma"))
             Prediction.collection = Prediction.client.get_or_create_collection(name="car_prediction",
